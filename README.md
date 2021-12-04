@@ -1,24 +1,34 @@
-#Fix for the RPi4 (4gb) powered by the official RPi POE+ hat
+# Fix RPi4 (4gb) official RPi POE+ hat fan failure
 
-##  Enter read/write mode
+
+
+### 1) Enter read/write mode
 [root@pikvm ~]# rw
 
-##  Edit raspberrypi.conf
+### 2) Edit raspberrypi.conf
+```
 nano /etc/modules-load.d/raspberrypi.conf
+```
 
-##  Comment out/remove snd-bcm2835; Add i2c_dev
+##### Comment/remove snd-bcm2835  -->  Add i2c_dev
 ```
 #snd-bcm2835
 i2c_dev
 ```
-##  Save and exit
-ctrl-x ... y ... enter
 
-##  Create file pikvm-poe-plus-fix.service
-[root@pikvm ~]# nano /etc/systemd/system/pikvm-poe-plus-fix.service
+##### Save and exit
+`ctrl` + `x`,  `y`,  `enter`
+
+
+### 3) Create file pikvm-poe-plus-fix.service
+```
+nano /etc/systemd/system/pikvm-poe-plus-fix.service
+```
+
+File contents:
 ```
 [Unit]
-Description=Fix for rpi4b (4gb) pikvm powered with official rpi poe plus hat. Gets both the HDMI-CSI bridge and hat>
+Description=Fix RPi4 (4gb) official RPi POE+ hat fan failure
 
 [Service]
 ExecStart=/usr/local/bin/pikvm-bridge-fan-fix.sh
@@ -26,32 +36,48 @@ ExecStart=/usr/local/bin/pikvm-bridge-fan-fix.sh
 [Install]
 WantedBy=multi-user.target
 ```
-##  Set permissions to -rw-r--r--
-[root@pikvm ~]# chmod 644 /etc/systemd/system/pikvm-poe-plus-fix.service
 
-##  Create file pikvm-bridge-fan-fix.sh
-[root@pikvm ~]# nano /usr/local/bin/pikvm-bridge-fan-fix.sh
+##### Set permissions to -rw-r--r--
+```
+chmod 644 /etc/systemd/system/pikvm-poe-plus-fix.service
+```
+
+### 4) Create file pikvm-bridge-fan-fix.sh
+```
+nano /usr/local/bin/pikvm-bridge-fan-fix.sh
+```
+
+File contents:
 ```
 #!/bin/sh
 sleep 30
 i2cdetect -y 0
 ```
-##  Save and exit
-ctrl-x ... y ... enter
 
-##  Set permissions to -rwxr-xr-x
-[root@pikvm ~]# chmod 755 /usr/local/bin/pikvm-bridge-fan-fix.sh
+##### Save and exit
+`ctrl` + `x`,  `y`,  `enter`
 
-##  Reload systemd manager configuration
-[root@pikvm ~]# systemctl daemon-reload
+##### Set permissions to -rwxr-xr-x
+```
+chmod 755 /usr/local/bin/pikvm-bridge-fan-fix.sh
+```
 
-##  Start the service; Wait ~30 seconds
-[root@pikvm ~]# systemctl start pikvm-poe-plus-fix.service
+### 5) Reload systemd manager configuration
+```
+systemctl daemon-reload
+```
 
-##  Check the service status
-[root@pikvm ~]# systemctl status pikvm-poe-plus-fix.service
+### 6) Start the service; Wait ~30 seconds
+```
+systemctl start pikvm-poe-plus-fix.service
+```
 
-##  The output should look something like this:
+### 7) Check the service status
+```
+systemctl status pikvm-poe-plus-fix.service
+```
+
+##### The output should look something like this:
 ```
 [root@pikvm ~]# systemctl status pikvm-poe-plus-fix.service
 * pikvm-poe-plus-fix.service - Fix for rpi4b (4gb) pikvm powered with official rpi poe plus hat. Gets both the HDMI>
@@ -73,16 +99,18 @@ Dec 01 03:41:44 pikvm.lab sudo[450]: pam_unix(sudo:session): session closed for 
 Dec 01 03:41:44 pikvm.lab systemd[1]: pikvm-poe-plus-fix.service: Deactivated successfully.
 ```
 
-##  Exit systemctl
-[root@pikvm ~]# ctrl-c
+##### Exit systemctl
+`ctrl` + `c`
 
-##  Set the service to start on boot
-[root@pikvm ~]# systemctl enable pikvm-poe-plus-fix.service
+### 8) Set the service to start on boot
+```
+systemctl enable pikvm-poe-plus-fix.service
+```
 
-##  Return to read only mode
-[root@pikvm ~]# ro
+### 9) Return to read only mode
+`ro`
 
-##  Reboot your system
-[root@pikvm ~]# reboot
+### 10) Reboot your system
+`reboot`
 
-##  If successful, your KVM should work and the rpi poe+ fan will spin up once it reaches temp!
+## If successful, your KVM should work and the rpi poe+ fan will spin up once it reaches temp!

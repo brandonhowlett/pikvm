@@ -1,4 +1,4 @@
-# Fix RPi4 (4gb) official RPi POE+ hat fan failure
+# Fix: PiKVM RPi4 (4gb) official RPi POE+ hat fan failure
 
 
 
